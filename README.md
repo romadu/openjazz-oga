@@ -3,17 +3,17 @@
 Software used
 - RK3326 Dev Enviroment https://forum.odroid.com/viewtopic.php?p=306185#p306185
 
-Use chroot32 terminal 
+Use chroot64 terminal 
 - type 
 ```mkdir testbuild```
 
-Download and extract source code to `armhf/testbuild/`
+Download and extract source code to `/mnt/data/arm64/testbuild/`
 Should look like:
-```armhf/testbuild/openjazz-oga/```
+```/mnt/data/arm64/testbuild/openjazz-oga/```
 
 Make necessary changes to the `controls.cpp` and `video.h` files if needed. Look bellow for changes.
 
-Now go back to chroot32
+Now go back to chroot64
 - type 
 ```cd openjazz-oga```
 - type
@@ -57,8 +57,8 @@ OpenJazz.sh
     #define DEFAULT_BUTTON_ESCAPE       (17)
     #define DEFAULT_BUTTON_STATS        (-1)
     #define DEFAULT_BUTTON_PAUSE        (12)
-    #define DEFAULT_BUTTON_YES          (-1)
-    #define DEFAULT_BUTTON_NO           (-1)
+    #define DEFAULT_BUTTON_YES          (1)
+    #define DEFAULT_BUTTON_NO           (0)
 ```
 
 - `src/io/gfx/video.h`
@@ -84,8 +84,8 @@ OpenJazz.sh
     #define DEFAULT_BUTTON_ESCAPE       (10)
     #define DEFAULT_BUTTON_STATS        (-1)
     #define DEFAULT_BUTTON_PAUSE        (15)
-    #define DEFAULT_BUTTON_YES          (-1)
-    #define DEFAULT_BUTTON_NO           (-1)
+    #define DEFAULT_BUTTON_YES          (1)
+    #define DEFAULT_BUTTON_NO           (0)
 ```
 - `src/io/gfx/video.h`
 - From line 96 to 97
@@ -110,8 +110,8 @@ OpenJazz.sh
     #define DEFAULT_BUTTON_ESCAPE       (7)
     #define DEFAULT_BUTTON_STATS        (-1)
     #define DEFAULT_BUTTON_PAUSE        (6)
-    #define DEFAULT_BUTTON_YES          (-1)
-    #define DEFAULT_BUTTON_NO           (-1)
+    #define DEFAULT_BUTTON_YES          (0)
+    #define DEFAULT_BUTTON_NO           (1)
 ```
 - Same file from line 237 to 244
 ```
