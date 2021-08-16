@@ -7,11 +7,11 @@ Use chroot32 terminal
 - type 
 ```mkdir testbuild```
 
-Download and extract source code to armhf/testbuild/
+Download and extract source code to `armhf/testbuild/`
 Should look like:
 ```armhf/testbuild/openjazz-oga/```
 
-Make nessacry changes to the controls.cpp and video.h files if needed. Look bellow for changes
+Make necessary changes to the `controls.cpp` and `video.h` files if needed. Look bellow for changes.
 
 Now go back to chroot32
 - type 
@@ -19,8 +19,8 @@ Now go back to chroot32
 - type
 ```make -f Makefile.sdl2```
 
-Let it build
-Your binary should be located in the root openjazz-oga folder
+Let it build.
+Your binary should be located in the root openjazz-oga folder.
 
 Now create your OpenJazz.sh file
 ```
@@ -29,9 +29,9 @@ cd /roms/ports/openjazz/
 ./OpenJazz -f "$(pwd)/gamedata" > logfile
 ```
 
-Create a folder in ports called openjazz
-Place the compiled binary in `OpenJazz` binary and `openjazz.000` from the root folder to the newly created openjazz folder
-Create a folder called `gamedata`, place your game data in this folder
+Create a folder in ports called openjazz.
+Place the compiled binary in `OpenJazz` binary and `openjazz.000` from the root folder to the newly created openjazz folder.
+Create a folder called `gamedata`, place your game data in this folder.
 You should now have these items
 
 ```
