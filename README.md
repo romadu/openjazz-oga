@@ -23,20 +23,24 @@ Let it build
 Your binary should be located in the root openjazz-oga folder
 
 Now create your OpenJazz.sh file
-```#!/bin/bash
+```
+#!/bin/bash
 cd /roms/ports/openjazz/
-./OpenJazz -f "$(pwd)/gamedata" > logfile```
+./OpenJazz -f "$(pwd)/gamedata" > logfile
+```
 
 Create a folder in ports called openjazz
 Place the compiled binary in `OpenJazz` binary and `openjazz.000` from the root folder to the newly created openjazz folder
 Create a folder called `gamedata`, place your game data in this folder
 You should now have these items
+
 ```
 openjazz/gamedata/
 openjazz/OpenJazz
 openjazz/openjazz.000
 OpenJazz.sh
 ```
+
 # RGB10/OGA1.1 required changes
 - `src/io/controls.cpp`
 - From line 171 to 184
