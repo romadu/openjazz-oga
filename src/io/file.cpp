@@ -29,9 +29,9 @@
 #include "util.h"
 
 #include <string.h>
-#include <miniz.h>
+#include "../miniz.h"
 
-#if !(defined(_WIN32) || defined(WII) || defined(PSP) || defined(_3DS))
+#if !(defined(_WIN32) || defined(WII) || defined(PSP))
     #define UPPERCASE_FILENAMES
     #define LOWERCASE_FILENAMES
 #endif
@@ -614,7 +614,7 @@ void File::loadPalette (SDL_Color* palette, bool rle) {
 
 		// Palette entries are 6-bit
 		// Shift them upwards to 8-bit, and fill in the lower 2 bits
-		palette[count].r = (buffer[count * 3] << 2) + (buffer[count * 3] >> 4);
+		palette[count].r = (buffer[count * 3]       << 2) + (buffer[count * 3] >> 4);
 		palette[count].g = (buffer[(count * 3) + 1] << 2) + (buffer[(count * 3) + 1] >> 4);
 		palette[count].b = (buffer[(count * 3) + 2] << 2) + (buffer[(count * 3) + 2] >> 4);
 

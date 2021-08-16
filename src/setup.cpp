@@ -41,8 +41,6 @@
     #endif
 #elif defined(__riscos__)
     #define CONFIG_FILE "/<Choices$Write>/OpenJazz/openjazz.cfg"
-#elif __vita__
-    #define CONFIG_FILE "ux0:data/jazz/openjazz.cfg"
 #else
     #define CONFIG_FILE "openjazz.cfg"
 #endif
@@ -125,7 +123,11 @@ void Setup::load (int* videoW, int* videoH, bool* fullscreen, int* videoScale) {
 
 	// Read controls
 	for (count = 0; count < CONTROLS - 4; count++)
+#ifdef SDL2
+		controls.setKey(count, (SDL_Keycode)(file->loadInt()));
+#else
 		controls.setKey(count, (SDLKey)(file->loadInt()));
+#endif
 
 	for (count = 0; count < CONTROLS; count++)
 		controls.setButton(count, file->loadInt());

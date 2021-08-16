@@ -8,10 +8,8 @@ CPPFLAGS = -Isrc -DSCALE -Iext/scale2x -Iext/psmplug -Iext/miniz
 
 # Network support
 CXXFLAGS += -DUSE_SOCKETS
-ifeq ($(OS),Windows_NT)
-	# Only needed under Windows.
-	LIBS += -lws2_32
-endif
+# Needed under Windows
+#LIBS += -lws2_32
 
 # SDL
 CXXFLAGS += $(shell sdl-config --cflags)

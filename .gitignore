@@ -1,7 +1,4 @@
 *.o
-openjazz
-OpenJazz
-openjazz.cfg
 *.exe
 *.a
 
@@ -15,19 +12,18 @@ EBOOT.PBP
 *.3dsx
 *.smdh
 *.d
-/builds/3ds/build
-/builds/3ds/romfs
+/build/
 
 # RISC OS
-/builds/riscos/\!OpenJazz/data/*
-/builds/riscos/\!OpenJazz/openjazz.000
+riscos/\!OpenJazz/data/*
+riscos/\!OpenJazz/openjazz.000
 *,ff8
 *,e1f
 
 .DS_Store
 
 # autotools
-/builds/autotools/
+/build-aux/
 .deps/
 .dirstamp
 Makefile.in
@@ -36,12 +32,3 @@ aclocal.m4
 config.log
 config.status
 configure
-configure~
-
-# distribution
-openjazz-*.tar.*
-OpenJazz-*.zip
-
-# generated documentation
-/doc/html
-/builds/unix/OpenJazz.6

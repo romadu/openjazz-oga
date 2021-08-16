@@ -38,9 +38,8 @@
 		#include <winsock.h>
 		#define ioctl ioctlsocket
 		#define socklen_t int
-		#ifndef EWOULDBLOCK
-			#define EWOULDBLOCK WSAEWOULDBLOCK
-		#endif
+		#define EWOULDBLOCK WSAEWOULDBLOCK
+		#define MSG_NOSIGNAL 0
 	#else
 		#include <sys/types.h>
 		#include <sys/socket.h>
@@ -52,15 +51,8 @@
 		#include <errno.h>
 		#include <string.h>
 	#endif
-	#ifndef MSG_NOSIGNAL
+	#ifdef __APPLE__
 		#define MSG_NOSIGNAL 0
-	#endif
-	#ifdef _3DS
-		#include <3ds.h>
-		#include <fcntl.h>
-		#include <malloc.h>
-		static u32* socBuffer = NULL;
-		#define SOC_BUFFERSIZE 0x100000
 	#endif
 #elif defined(WII)
 	#include <network.h>
@@ -80,9 +72,6 @@ Network::Network () {
 
 	// Start Windows Sockets
 	WSAStartup(MAKEWORD(1, 0), &WSAData);
-	#elif defined(_3DS)
-	socBuffer = (u32*)memalign(0x1000, SOC_BUFFERSIZE);
-	socInit(socBuffer, SOC_BUFFERSIZE);
 	#endif
 #elif defined USE_SDL_NET
 #  ifdef WII
@@ -108,9 +97,6 @@ Network::~Network () {
 	#ifdef _WIN32
 	// Shut down Windows Sockets
 	WSACleanup();
-	#elif defined(_3DS)
-	socExit();
-	free(socBuffer);
 	#endif
 #elif defined USE_SDL_NET
 	SDLNet_Quit();
@@ -143,11 +129,7 @@ int Network::host () {
 
 	// Make the socket non-blocking
 	nonblock = 1;
-#ifdef _3DS
-	fcntl(sock, F_SETFL, fcntl(sock, F_GETFL, 0) | O_NONBLOCK);
-#else
 	ioctl(sock, FIONBIO, (u_long *)&nonblock);
-#endif
 
 	memset(&sockAddr, 0, sizeof(sockaddr_in));
 	sockAddr.sin_family = AF_INET;
@@ -210,12 +192,9 @@ int Network::join (char *address) {
 	if (sock == -1) return E_N_SOCKET;
 
 	// Make socket non-blocking
-#ifdef _3DS
-	fcntl(sock, F_SETFL, fcntl(sock, F_GETFL, 0) | O_NONBLOCK);
-#else
 	con = 1;
 	ioctl(sock, FIONBIO, (u_long *)&con);
-#endif
+
 
 	// Connect to server
 
@@ -327,12 +306,8 @@ int Network::accept (int sock) {
 	if (clientSocket != -1) {
 
 		// Make the socket non-blocking
-#ifdef _3DS
-		fcntl(clientSocket, F_SETFL, fcntl(sock, F_GETFL, 0) | O_NONBLOCK);
-#else
 		length = 1;
 		ioctl(clientSocket, FIONBIO, (u_long *)&length);
-#endif
 
 	}
 

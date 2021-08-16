@@ -35,11 +35,6 @@
 #include "io/sound.h"
 #include "loop.h"
 #include "util.h"
-#ifdef _3DS
-	#include "platforms/3ds.h"
-#elif defined(__vita__)
-	#include "platforms/psvita.h"
-#endif
 
 #include <string.h>
 
@@ -50,6 +45,16 @@
 void Menu::showEscString () {
 
 	fontbig->showString(ESCAPE_STRING, 3, canvasH - 12);
+	SDL_Color Col_red[256]; 
+        int count;
+		for (count = 0; count < 256; count++)
+		{
+			Col_red[count].r = 255;
+			Col_red[count].g = 0;
+			Col_red[count].b = 0;
+		}
+		fontbig->setPalette(Col_red);
+	
 
 	return;
 
@@ -65,7 +70,7 @@ void Menu::showEscString () {
  */
 int Menu::message (const char* text) {
 
-	video.setPalette(menuPalette);
+	fontmn2->setPalette(menuPalette);
 
 	while (true) {
 
@@ -80,6 +85,7 @@ int Menu::message (const char* text) {
 
 		// Draw the message
 		fontmn2->showString(text, canvasW >> 2, (canvasH >> 1) - 16);
+		fontmn2->setPalette(menuPalette);;
 
 	}
 
@@ -152,13 +158,14 @@ int Menu::generic (const char** optionNames, int options, int& chosen) {
 
 			if (count == chosen) fontmn2->mapPalette(240, 8, 114, 16);
 
-			fontmn2->showString(optionNames[count], canvasW >> 2,
-				(canvasH >> 1) + (count << 4) - (options << 3));
+			fontmn2->showString(optionNames[count], canvasW >> 2, (canvasH >> 1) + (count << 4) - (options << 3));
+			fontmn2->setPalette(menuPalette);
 
-			if (count == chosen) fontmn2->restorePalette();
+			if (count == chosen) fontmn2->setPalette(menuPalette);
+
 
 		}
-
+        fontmn2->setPalette(menuPalette);;
 		showEscString();
 
 	}
@@ -176,46 +183,10 @@ int Menu::generic (const char** optionNames, int options, int& chosen) {
  *
  * @return Error code
  */
-int Menu::textInput (const char* request, char*& text, bool ip) {
+int Menu::textInput (const char* request, char*& text) {
 
 	char *input;
-
-#ifdef _3DS
-
-	int res;
-
-	if (ip)
-		res = N3DS_InputIP(text, input);
-	else
-		res = N3DS_InputString(request, text, input);
-
-	if (res) {
-
-		playSound(S_ORB);
-
-		delete[] text;
-		text = input;
-
-		return E_NONE;
-
-	}
-
-#elif defined(__vita__)
-
-	if (PSVITA_InputString(request, text, input)) {
-
-		playSound(S_ORB);
-
-		delete[] text;
-		text = input;
-
-		return E_NONE;
-
-	}
-
-#else
-
-	int count, terminate, character, added, x, y;
+	int count, terminate, character, x, y;
 	unsigned int cursor;
 
 	video.setPalette(menuPalette);
@@ -244,35 +215,17 @@ int Menu::textInput (const char* request, char*& text, bool ip) {
 
 			// If the character is valid, add it to the input string
 
-			added = 0;
-
-			if (!ip) {
-
-				if (((character >= 'a') && (character <= 'z'))
-					|| (character == ' ')) {
-
-					input[cursor] = character;
-					added = 1;
-
-				} else if ((character >= 'A') && (character <= 'Z')) {
-
-					input[cursor] = character | 32;
-					added = 1;
-
-				}
-
-			}
-
-			if (((character >= '0') && (character <= '9'))
-				|| (character == '.')) {
+			if ((character == ' ') || (character == '.') ||
+				((character >= '0') && (character <= '9')) ||
+				((character >= 'a') && (character <= 'z'))) {
 
 				input[cursor] = character;
-				added = 1;
+				cursor++;
+				if (terminate) input[cursor] = 0;
 
-			}
+			} else if ((character >= 'A') && (character <= 'Z')) {
 
-			if (added) {
-
+				input[cursor] = character | 32;
 				cursor++;
 				if (terminate) input[cursor] = 0;
 
@@ -326,7 +279,8 @@ int Menu::textInput (const char* request, char*& text, bool ip) {
 		// Draw the section of text after the cursor
 		input[cursor] = terminate;
 		fontmn2->showString(input + cursor, x, canvasH >> 1);
-		fontmn2->restorePalette();
+		//fontmn2->setPalette(menuPalette);
+		fontmn2->setPalette(menuPalette);;
 
 		showEscString();
 
@@ -350,8 +304,6 @@ int Menu::textInput (const char* request, char*& text, bool ip) {
 	}
 
 	delete[] input;
-
-#endif
 
 	return E_RETURN;
 

@@ -25,16 +25,17 @@
 #include "sound.h"
 #include "util.h"
 
-#include <SDL_audio.h>
-#include <psmplug.h>
+//#include "SDL_audio.h"
+#include <SDL2/SDL_audio.h>
+#include "psmplug.h"
 
-#if defined(__SYMBIAN32__) || defined(_3DS) || defined(PSP) || defined(__vita__)
+#if defined(__SYMBIAN32__) || defined(_3DS) || defined(PSP)
 	#define SOUND_FREQ 22050
 #else
 	#define SOUND_FREQ 44100
 #endif
 
-#if defined(GP2X) || defined(PSP) || defined(_3DS) || defined(__vita__)
+#if defined(GP2X) || defined(PSP) || defined(_3DS)
 	#define SOUND_SAMPLES 512
 #else
 	#define SOUND_SAMPLES 2048
@@ -376,6 +377,7 @@ int getMusicTempo () {
  *
  * @param tempo new tempo (MUSIC_NORMAL, MUSIC_FAST)
  */
+void ModPlug_SetMusicTempoFactor(ModPlugFile* file, unsigned int ctemp);
 void setMusicTempo (int tempo) {
 
 	if ((tempo != MUSIC_FAST) && (tempo != MUSIC_NORMAL))

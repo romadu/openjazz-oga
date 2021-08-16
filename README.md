@@ -1,3 +1,134 @@
+# Building for OGA devices:
+
+Software used
+- RK3326 Dev Enviroment https://forum.odroid.com/viewtopic.php?p=306185#p306185
+
+Use chroot32 terminal 
+- type 
+```mkdir testbuild```
+
+Download and extract source code to armhf/testbuild/
+Should look like:
+```armhf/testbuild/openjazz-oga/```
+
+Make nessacry changes to the controls.cpp and video.h files if needed. Look bellow for changes
+
+Now go back to chroot32
+- type 
+```cd openjazz-oga```
+- type
+```make -f Makefile.sdl2```
+
+Let it build
+Your binary should be located in the root openjazz-oga folder
+
+Now create your OpenJazz.sh file
+```#!/bin/bash
+cd /roms/ports/openjazz/
+./OpenJazz -f "$(pwd)/gamedata" > logfile```
+
+Create a folder in ports called openjazz
+Place the compiled binary in `OpenJazz` binary and `openjazz.000` from the root folder to the newly created openjazz folder
+Create a folder called `gamedata`, place your game data in this folder
+You should now have these items
+```
+openjazz/gamedata/
+openjazz/OpenJazz
+openjazz/openjazz.000
+OpenJazz.sh
+```
+# RGB10/OGA1.1 required changes
+- `src/io/controls.cpp`
+- From line 171 to 184
+```
+    #define DEFAULT_BUTTON_UP           (8)
+    #define DEFAULT_BUTTON_DOWN         (9)
+    #define DEFAULT_BUTTON_LEFT         (10)
+    #define DEFAULT_BUTTON_RIGHT        (11)
+    #define DEFAULT_BUTTON_JUMP         (0)
+    #define DEFAULT_BUTTON_SWIM         (0)
+    #define DEFAULT_BUTTON_FIRE         (3)
+    #define DEFAULT_BUTTON_CHANGE       (2)
+    #define DEFAULT_BUTTON_ENTER        (1)
+    #define DEFAULT_BUTTON_ESCAPE       (17)
+    #define DEFAULT_BUTTON_STATS        (-1)
+    #define DEFAULT_BUTTON_PAUSE        (12)
+    #define DEFAULT_BUTTON_YES          (-1)
+    #define DEFAULT_BUTTON_NO           (-1)
+```
+
+- `src/io/gfx/video.h`
+- From line 96 to 97
+```
+	#define DEFAULT_SCREEN_WIDTH 480
+	#define DEFAULT_SCREEN_HEIGHT 320
+```
+
+# RK2020/OGA1.0
+- `src/io/controls.cpp`
+- From line 171 to 184
+```
+    #define DEFAULT_BUTTON_UP           (6)
+    #define DEFAULT_BUTTON_DOWN         (7)
+    #define DEFAULT_BUTTON_LEFT         (8)
+    #define DEFAULT_BUTTON_RIGHT        (9)
+    #define DEFAULT_BUTTON_JUMP         (0)
+    #define DEFAULT_BUTTON_SWIM         (0)
+    #define DEFAULT_BUTTON_FIRE         (3)
+    #define DEFAULT_BUTTON_CHANGE       (2)
+    #define DEFAULT_BUTTON_ENTER        (1)
+    #define DEFAULT_BUTTON_ESCAPE       (10)
+    #define DEFAULT_BUTTON_STATS        (-1)
+    #define DEFAULT_BUTTON_PAUSE        (15)
+    #define DEFAULT_BUTTON_YES          (-1)
+    #define DEFAULT_BUTTON_NO           (-1)
+```
+- `src/io/gfx/video.h`
+- From line 96 to 97
+```
+	#define DEFAULT_SCREEN_WIDTH 480
+	#define DEFAULT_SCREEN_HEIGHT 320
+```
+
+# RG351p/m required changes
+- `src/io/controls.cpp`
+- From line 171 to 184
+```
+    #define DEFAULT_BUTTON_UP           (-1)
+    #define DEFAULT_BUTTON_DOWN         (-1)
+    #define DEFAULT_BUTTON_LEFT         (-1)
+    #define DEFAULT_BUTTON_RIGHT        (-1)
+    #define DEFAULT_BUTTON_JUMP         (1)
+    #define DEFAULT_BUTTON_SWIM         (1)
+    #define DEFAULT_BUTTON_FIRE         (3)
+    #define DEFAULT_BUTTON_CHANGE       (2)
+    #define DEFAULT_BUTTON_ENTER        (0)
+    #define DEFAULT_BUTTON_ESCAPE       (7)
+    #define DEFAULT_BUTTON_STATS        (-1)
+    #define DEFAULT_BUTTON_PAUSE        (6)
+    #define DEFAULT_BUTTON_YES          (-1)
+    #define DEFAULT_BUTTON_NO           (-1)
+```
+- Same file from line 237 to 244
+```
+	axes[C_UP].axis = 1;
+	axes[C_UP].direction = true;
+	axes[C_DOWN].axis = 1;
+	axes[C_DOWN].direction = false;
+	axes[C_LEFT].axis = 0;
+	axes[C_LEFT].direction = true;
+	axes[C_RIGHT].axis = 0;
+	axes[C_RIGHT].direction = false;
+```
+
+- `src/io/gfx/video.h`
+- From line 96 to 97
+```
+	#define DEFAULT_SCREEN_WIDTH 480
+	#define DEFAULT_SCREEN_HEIGHT 320
+```
+
+
 
 # OpenJazz - http://www.alister.eu/jazz/oj/
 
@@ -9,7 +140,8 @@ is a free, open-source version of the classic Jazz Jackrabbit™ games.
 
 OpenJazz can be compiled on a wide range of operating systems, including
 Windows, macOS, GNU/Linux and *BSD. Also ports are available for some
-homebrew platforms, for example Wii and PSP.
+homebrew platforms, for example Wii and PSP, Nintendo Switch, PlayStation 
+Classic.
 
 To play, you will need the files from one of the original games.
 
@@ -34,6 +166,9 @@ Since then, a variety of ports have been released by other people.
 
 More academic pressures meant there were few updates over the following few
 years, but in 2009 a multiplayer version was released.
+
+SDL2 support was added by KranKRival for the Nintendo Switch and partially 
+ported back over by Swingflip for ports for classic consoles.
 
 ## License
 
@@ -61,6 +196,10 @@ used. However, not all axes or buttons may be available.
 
 Needed:
 - SDL 1.2.x library (https://libsdl.org/).
+
+OR 
+
+- SDL 2.0.x library (https://libsdl.org/).
 
 Optional:
 - SDL_net 1.2.x library (https://www.libsdl.org/projects/SDL_net/)

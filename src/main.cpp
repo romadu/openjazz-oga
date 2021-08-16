@@ -26,6 +26,7 @@
 
 
 #define EXTERN
+#define SDL2
 
 #include "game/game.h"
 #include "io/controls.h"
@@ -44,25 +45,30 @@
 #include "util.h"
 
 #ifdef PSP
-	#include "platforms/psp.h"
+	#include <pspsdk.h>
+	#include <pspkernel.h>
+	#include <pspthreadman.h>
+	#include <pspmoduleinfo.h>
+	#include <pspdebug.h>
+	#include <psputility.h>
+	#include <pspdisplay.h>
 #elif defined(_3DS)
 	#include <3ds.h>
-	#include "platforms/3ds.h"
 #elif defined(WII)
 	#include <unistd.h>
 	#include <fat.h>
 	#include "platforms/wii.h"
-#elif defined(__vita__)
-	#include "platforms/psvita.h"
 #elif defined(__HAIKU__)
 	#include <Alert.h>
 	#include <FindDirectory.h>
 	#include <fs_info.h>
-#elif defined(WIZ) || defined(GP2X)
-	#include "platforms/wiz.h"
 #endif
 
 #include <string.h>
+
+#if defined(WIZ) || defined(GP2X)
+	#include "platforms/wiz.h"
+#endif
 
 #ifdef __SYMBIAN32__
 extern char KOpenJazzPath[256];
@@ -133,10 +139,6 @@ void startUp (int argc, char *argv[]) {
 	firstPath = new Path(firstPath, createString(KOpenJazzPath));
 #endif
 
-#ifdef _3DS
-	firstPath = new Path(firstPath, createString("sdmc:/3ds/OpenJazz/"));
-	firstPath = new Path(firstPath, createString("romfs:/"));
-#endif
 
 	// Use any provided paths, appending a directory separator as necessary
 
@@ -165,31 +167,28 @@ void startUp (int argc, char *argv[]) {
 
 	}
 
+	// Use the path of the program, but not on Wii as this does crash in
+	// dolphin emulator. Also is not needed, because CWD is used there
 
-	// Use the path of the program, but check before, since it is not always available
-	// At least crashes in Dolphin emulator (Wii) and 3DS (.cia build)
+#ifndef WII
+	count = strlen(argv[0]) - 1;
 
-	if (argc > 0) {
-
-		count = strlen(argv[0]) - 1;
-
-		// Search for directory separator
+	// Search for directory separator
 #ifdef _WIN32
-		while ((argv[0][count] != '\\') && (count >= 0)) count--;
+	while ((argv[0][count] != '\\') && (count >= 0)) count--;
 #else
-		while ((argv[0][count] != '/') && (count >= 0)) count--;
+	while ((argv[0][count] != '/') && (count >= 0)) count--;
 #endif
 
-		// If a directory was found, copy it to the path
-		if (count > 0) {
+	// If a directory was found, copy it to the path
+	if (count > 0) {
 
-			firstPath = new Path(firstPath, new char[count + 2]);
-			memcpy(firstPath->path, argv[0], count + 1);
-			firstPath->path[count + 1] = 0;
-
-		}
+		firstPath = new Path(firstPath, new char[count + 2]);
+		memcpy(firstPath->path, argv[0], count + 1);
+		firstPath->path[count + 1] = 0;
 
 	}
+#endif
 
 
 	// Use the user's home directory, if available
@@ -294,8 +293,6 @@ void startUp (int argc, char *argv[]) {
 		BAlert* alert = new BAlert("OpenJazz", alertBuffer, "Exit", NULL, NULL,
 			B_WIDTH_AS_USUAL, B_STOP_ALERT);
 		alert->Go();
-#elif defined(PSP)
-		PSP_ErrorNoDatafiles();
 #endif
 
 		throw e;
@@ -403,11 +400,12 @@ void shutDown () {
  * @return Error code
  */
 int play () {
-
+	
 	MainMenu *mainMenu = NULL;
 	JJ1Scene *scene = NULL;
 
 	// Start the opening music
+    
 
 	playMusic("MENUSNG.PSM");
 
@@ -547,15 +545,20 @@ int loop (LoopType type, PaletteEffect* paletteEffects, bool effectsStopped) {
 
 	controls.loop();
 
-#ifdef PSP
-	if (PSP_WantsExit()) return E_QUIT;
-#elif defined(WIZ) || defined(GP2X)
+
+#if defined(WIZ) || defined(GP2X)
 	WIZ_AdjustVolume( volume_direction );
 #endif
 
 	return E_NONE;
 
 }
+
+#ifdef PSP
+	PSP_MODULE_INFO("OpenJazz", PSP_MODULE_USER, 0, 1);
+	PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER);
+	PSP_HEAP_SIZE_KB(-2048);
+#endif
 
 /**
  * Main.
@@ -569,17 +572,26 @@ int main(int argc, char *argv[]) {
 	// Early platform init
 
 #ifdef PSP
-	PSP_PrepareSystem();
+	pspDebugScreenInit();
+	atexit(sceKernelExitGame);
+	sceIoChdir("ms0:/PSP/GAME/OpenJazz");
 #elif defined(WII)
 	fatInitDefault();
 	Wii_SetConsole();
-#elif defined(_3DS)
-	romfsInit();
-#elif defined(__vita__)
-	PSVITA_InitControls();
 #endif
 
 	// Initialise SDL
+
+	for (int i = 0; i < 2; i++) {
+        if (SDL_JoystickOpen(i) == NULL) 
+        {
+            //WriteLogFile("sdmc://WriteLogFile.log", LogType_Info,"SDL_JoystickOpen: %s\n", SDL_GetError());
+        }
+        else
+        {
+            //WriteLogFile("sdmc://WriteLogFile.log", LogType_Info,"SDL_JoystickOpen: OK\n");
+        }
+    } 
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK) < 0) {
 
@@ -613,10 +625,6 @@ int main(int argc, char *argv[]) {
 	// Save configuration and shut down
 
 	shutDown();
-
-#ifdef _3DS
-	romfsExit();
-#endif
 
 	SDL_Quit();
 
