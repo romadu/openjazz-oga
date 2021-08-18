@@ -5,7 +5,11 @@ Software used
 
 Use chroot64 terminal 
 - type 
-```mkdir testbuild```
+```
+mkdir testbuild
+
+cd testbuild
+```
 
 Download and extract source code to `/mnt/data/arm64/testbuild/`
 Should look like:
