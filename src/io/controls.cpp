@@ -208,9 +208,9 @@ Controls::Controls () {
 	keys[C_BOUNCER].key = DEFAULT_KEY_BOUNCER;
 	keys[C_TNT].key = DEFAULT_KEY_TNT;
 	keys[C_STATS].key = DEFAULT_KEY_STATS;
-	keys[C_PAUSE].key = DEFAULT_KEY_PAUSE;
-	keys[C_YES].key = DEFAULT_KEY_YES;
-	keys[C_NO].key = DEFAULT_KEY_NO;
+	keys[C_PAUSE].key = DEFAULT_KEY_ENTER;
+	keys[C_YES].key = DEFAULT_KEY_FIRE;
+	keys[C_NO].key = DEFAULT_KEY_ESCAPE;
 
 
 	buttons[C_UP].button = DEFAULT_BUTTON_UP;
@@ -512,25 +512,25 @@ int Controls::update (SDL_Event *event, LoopType type) {
 			break;
 
 		case SDL_JOYBUTTONDOWN:
-
+/*
 			if (type == SET_JOYSTICK_LOOP) return JOYSTICKB | event->jbutton.button;
 
 			for (count = 0; count < CONTROLS; count++)
 				if (event->jbutton.button == buttons[count].button)
 					buttons[count].pressed = true;
-
+*/
 			break;
 
 		case SDL_JOYBUTTONUP:
-
+/*
 			for (count = 0; count < CONTROLS; count++)
 				if (event->jbutton.button == buttons[count].button)
 					buttons[count].pressed = false;
-
+*/
 			break;
 
 		case SDL_JOYAXISMOTION:
-
+/*
 			if (type == SET_JOYSTICK_LOOP) {
 
 				if (event->jaxis.value < -16384)
@@ -551,11 +551,12 @@ int Controls::update (SDL_Event *event, LoopType type) {
 						axes[count].pressed = false;
 
 				}
-
+*/
 			break;
 
 		case SDL_JOYHATMOTION:
 
+/*
 			if (type == SET_JOYSTICK_LOOP) {
 
 				switch(event->jhat.value) {
@@ -579,7 +580,7 @@ int Controls::update (SDL_Event *event, LoopType type) {
 						hats[count].pressed = false;
 
 				}
-
+*/
 			break;
 
 		case SDL_MOUSEMOTION:
