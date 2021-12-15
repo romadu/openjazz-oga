@@ -592,7 +592,11 @@ int main(int argc, char *argv[]) {
             //WriteLogFile("sdmc://WriteLogFile.log", LogType_Info,"SDL_JoystickOpen: OK\n");
         }
     } 
-
+    
+    if (const char* db_file = SDL_getenv("SDL_GAMECONTROLLERCONFIG_FILE")) {
+        SDL_GameControllerAddMappingsFromFile(db_file);
+    }
+  
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK) < 0) {
 
 		logError("Could not start SDL", SDL_GetError());
